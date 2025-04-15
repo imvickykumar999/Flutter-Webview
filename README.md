@@ -1,8 +1,8 @@
-# 💡 How to Create a WebView App in Flutter – Beginner-Friendly Guide
+># 💡 `How to Create a WebView App in Flutter`
+>
+>[![image](https://github.com/user-attachments/assets/5d51a002-1329-4a74-82a0-ee6d649fea0f)](https://www.imvickykumar999.online/blogs/how-to-create-a-webview-app-in-flutter-beginner-friendly-guide/)
 
 If you’re new to Flutter and want to create a simple **WebView app** that opens a website inside your mobile app, this guide is for you! We’ll cover everything from setting up Flutter to running your app on a real Android phone — no emulator required.
-
----
 
 ## ✅ Step 1: Set Up Flutter on Linux
 
@@ -137,23 +137,36 @@ class _WebViewExampleState extends State<WebViewExample> {
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(Uri.parse("https://www.imvickykumar999.online/"));
+    _controller =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..loadRequest(Uri.parse("https://www.imvickykumar999.online/"));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'imvickykumar999.online',
-          style: TextStyle(color: Colors.white),
+    return PopScope(
+      canPop: false, // Disable default back behavior
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          if (await _controller.canGoBack()) {
+            _controller.goBack(); // Go back in WebView
+          } else {
+            Navigator.of(context).maybePop(); // Exit app if no back stack
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'imvickykumar999.online',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: const Color(0xFF04203F),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF04203F),
-        iconTheme: const IconThemeData(color: Colors.white),
+        body: WebViewWidget(controller: _controller),
       ),
-      body: WebViewWidget(controller: _controller),
     );
   }
 }
