@@ -28,23 +28,36 @@ class _WebViewExampleState extends State<WebViewExample> {
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(Uri.parse("https://www.imvickykumar999.online/")); // Replace with your site
+    _controller =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..loadRequest(Uri.parse("https://www.imvickykumar999.online/"));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'imvickykumar999.online',
-          style: TextStyle(color: Colors.white), // 👈 white text
+    return PopScope(
+      canPop: false, // Disable default back behavior
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          if (await _controller.canGoBack()) {
+            _controller.goBack(); // Go back in WebView
+          } else {
+            Navigator.of(context).maybePop(); // Exit app if no back stack
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'imvickykumar999.online',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: const Color(0xFF04203F),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF04203F), // 👈 dark blue background
-        iconTheme: const IconThemeData(color: Colors.white), // 👈 white icons (if any)
+        body: WebViewWidget(controller: _controller),
       ),
-      body: WebViewWidget(controller: _controller),
     );
   }
 }
