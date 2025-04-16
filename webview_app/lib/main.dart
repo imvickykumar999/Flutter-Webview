@@ -50,7 +50,7 @@ class _WebViewExampleState extends State<WebViewExample> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'imvickykumar999.online',
+            'imvickykumar999.online/blogs',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: const Color(0xFF04203F),
