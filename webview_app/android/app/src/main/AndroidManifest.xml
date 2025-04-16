@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
         <application
             android:usesCleartextTraffic="true"
-            android:label="webview_app"
+            android:label="Vick's Blog"
             android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
