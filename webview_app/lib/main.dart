@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(const MyApp());
 
@@ -35,6 +36,17 @@ class _WebViewExampleState extends State<WebViewExample> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onNavigationRequest: (NavigationRequest request) async {
+            Uri uri = Uri.parse(request.url);
+            if (uri.host.contains('imvickykumar999.online')) {
+              return NavigationDecision.navigate;
+            } else {
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+              return NavigationDecision.prevent;
+            }
+          },
           onPageStarted: (String url) {
             setState(() {
               _currentUrl = url;
@@ -56,9 +68,9 @@ class _WebViewExampleState extends State<WebViewExample> {
 
   void _copyUrlToClipboard() {
     Clipboard.setData(ClipboardData(text: _currentUrl)).then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("URL copied to clipboard")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("URL copied to clipboard")));
     });
   }
 
@@ -79,13 +91,15 @@ class _WebViewExampleState extends State<WebViewExample> {
         appBar: AppBar(
           backgroundColor: const Color(0xFF04203F),
           iconTheme: const IconThemeData(color: Colors.white),
-          title: Text(
-            _pageTitle,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
+          title: GestureDetector(
+            onTap: () {
+              _controller.reload(); // Refresh the WebView
+            },
+            child: Text(
+              _pageTitle,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+              overflow: TextOverflow.ellipsis,
             ),
-            overflow: TextOverflow.ellipsis,
           ),
           actions: [
             IconButton(
