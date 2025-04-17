@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(const MyApp());
 
@@ -24,37 +25,75 @@ class WebViewExample extends StatefulWidget {
 
 class _WebViewExampleState extends State<WebViewExample> {
   late final WebViewController _controller;
+  String _currentUrl = "Loading...";
+  String _pageTitle = "Loading...";
 
   @override
   void initState() {
     super.initState();
-    _controller =
-        WebViewController()
-          ..setJavaScriptMode(JavaScriptMode.unrestricted)
-          ..loadRequest(Uri.parse("https://www.imvickykumar999.online/"));
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            setState(() {
+              _currentUrl = url;
+              _pageTitle = "Loading...";
+            });
+          },
+          onPageFinished: (String url) async {
+            final updatedUrl = await _controller.currentUrl();
+            final title = await _controller.getTitle();
+            setState(() {
+              _currentUrl = updatedUrl ?? 'Unknown URL';
+              _pageTitle = title ?? 'No Title';
+            });
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse("https://www.imvickykumar999.online/"));
+  }
+
+  void _copyUrlToClipboard() {
+    Clipboard.setData(ClipboardData(text: _currentUrl)).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("URL copied to clipboard")),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // Disable default back behavior
+      canPop: false,
       onPopInvoked: (didPop) async {
         if (!didPop) {
           if (await _controller.canGoBack()) {
-            _controller.goBack(); // Go back in WebView
+            _controller.goBack();
           } else {
-            Navigator.of(context).maybePop(); // Exit app if no back stack
+            Navigator.of(context).maybePop();
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'imvickykumar999.online/blogs',
-            style: TextStyle(color: Colors.white),
-          ),
           backgroundColor: const Color(0xFF04203F),
           iconTheme: const IconThemeData(color: Colors.white),
+          title: Text(
+            _pageTitle,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.copy, color: Colors.white),
+              tooltip: "Copy URL",
+              onPressed: _copyUrlToClipboard,
+            ),
+          ],
         ),
         body: WebViewWidget(controller: _controller),
       ),
