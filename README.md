@@ -277,8 +277,99 @@ flutter run
 
 ---
 
-## ✅ Final Tips
+![WhatsApp Image 2025-04-18 at 5 12 00 PM](https://github.com/user-attachments/assets/65d3aeee-663a-4efa-8168-33af12b4bb10)
 
-- You can change the URL in `loadRequest(Uri.parse(...))` to open any site
-- Add a favicon using the `flutter_launcher_icons` package
-- Always test on a real device for best performance
+```markdown
+# 📱 Flutter WebView App
+
+A beginner-friendly Flutter app that loads a website in a WebView
+and handles external links using `url_launcher`.
+
+This project supports:
+
+- Loading your website inside a WebView
+- Opening external links in the system browser (not Chrome Custom Tabs)
+- Copying the current URL
+- Reloading the page by tapping the title
+- Building APKs and AAB for release
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Flutter SDK: [Install Flutter](https://flutter.dev/docs/get-started/install)
+- Android Studio or VS Code
+- Internet permission in `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
+---
+
+## 🛠️ Build Commands
+
+### 📦 Build Android App Bundle (.aab)
+
+```bash
+flutter build appbundle
+```
+
+> Output: `build/app/outputs/bundle/release/app-release.aab`
+
+---
+
+### 🟢 Build Release APK
+
+```bash
+flutter build apk --release
+```
+
+> Output: `build/app/outputs/flutter-apk/app-release.apk`
+
+---
+
+### 🟡 Build Debug APK
+
+```bash
+flutter build apk --debug
+```
+
+> Output: `build/app/outputs/flutter-apk/app-debug.apk`
+
+---
+
+## 📂 Folder Structure
+
+```
+lib/
+ └── main.dart          # Main app entry file
+android/
+ └── ...                # Android-specific code and settings
+build/                 # Auto-generated build files
+```
+
+---
+
+## 💡 Notes
+
+- Ensure that the domain used in WebView (e.g. `imvickykumar999.online`) supports being rendered in WebViews.
+- External links like Twitter, Facebook, and YouTube will open in the real browser app, not inside your Flutter app.
+
+---
+
+## 📜 License
+
+This project is open-source and free to use under the [MIT License](LICENSE).
+```
+
+---
+
+Let me know if you'd like to add:
+
+- Screenshots
+- GitHub clone/run instructions
+- Play Store deployment steps
+
