@@ -32,20 +32,22 @@ class _WebViewExampleState extends State<WebViewExample> {
   @override
   void initState() {
     super.initState();
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) async {
             Uri uri = Uri.parse(request.url);
+
+            // Allow internal domain to load in WebView
             if (uri.host.contains('imvickykumar999.online')) {
               return NavigationDecision.navigate;
-            } else {
-              if (await canLaunchUrl(uri)) {
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
-              }
-              return NavigationDecision.prevent;
             }
+
+            // Handle external links robustly
+            await _launchExternalUrl(request.url, context);
+            return NavigationDecision.prevent;
           },
           onPageStarted: (String url) {
             setState(() {
@@ -61,16 +63,44 @@ class _WebViewExampleState extends State<WebViewExample> {
               _pageTitle = title ?? 'No Title';
             });
           },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint("WebView Error: ${error.description}");
+          },
         ),
       )
-      ..loadRequest(Uri.parse("https://www.imvickykumar999.online/"));
+      ..loadRequest(Uri.parse("https://imvickykumar999.online/"));
   }
 
+  // 🔗 External URL handler
+  Future<void> _launchExternalUrl(String url, BuildContext context) async {
+    try {
+      final uri = Uri.parse(url);
+      debugPrint("Trying to launch external URL: $url");
+
+      // Attempt external app launch
+      if (await canLaunchUrl(uri)) {
+        final launched = await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
+        if (!launched) {
+          // Fallback to platform default
+          await launchUrl(uri, mode: LaunchMode.platformDefault);
+        }
+      } else {
+        // Fallback if no app found
+        await launchUrl(uri, mode: LaunchMode.platformDefault);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error opening URL: $e")),
+      );
+    }
+  }
+
+  // 📋 Copy current URL to clipboard
   void _copyUrlToClipboard() {
     Clipboard.setData(ClipboardData(text: _currentUrl)).then((_) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("URL copied to clipboard")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("URL copied to clipboard")),
+      );
     });
   }
 
@@ -93,7 +123,7 @@ class _WebViewExampleState extends State<WebViewExample> {
           iconTheme: const IconThemeData(color: Colors.white),
           title: GestureDetector(
             onTap: () {
-              _controller.reload(); // Refresh the WebView
+              _controller.reload(); // Refresh WebView
             },
             child: Text(
               _pageTitle,
