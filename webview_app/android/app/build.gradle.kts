@@ -11,8 +11,7 @@ if (keyPropertiesFile.exists()) {
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // Flutter Gradle Plugin
-    id("dev.flutter.flutter-gradle-plugin")
+    id("dev.flutter.flutter-gradle-plugin") // Flutter Gradle Plugin
 }
 
 android {
@@ -39,16 +38,21 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keyProperties["keyAlias"] as String
-            keyPassword = keyProperties["keyPassword"] as String
-            storeFile = file(keyProperties["storeFile"] as String)
-            storePassword = keyProperties["storePassword"] as String
+            keyAlias = keyProperties["keyAlias"]?.toString() ?: ""
+            keyPassword = keyProperties["keyPassword"]?.toString() ?: ""
+            storeFile = keyProperties["storeFile"]?.toString()?.let { file(it) }
+            storePassword = keyProperties["storePassword"]?.toString() ?: ""
         }
     }
 
     buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+            isShrinkResources = false // 🔥 Prevents the "unused resources" error
+        }
         getByName("release") {
             isMinifyEnabled = false
+            isShrinkResources = false
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
