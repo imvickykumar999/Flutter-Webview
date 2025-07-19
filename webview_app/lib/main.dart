@@ -41,7 +41,7 @@ class _WebViewExampleState extends State<WebViewExample> {
             Uri uri = Uri.parse(request.url);
 
             // Allow internal domain to load in WebView
-            if (uri.host.contains('imvickykumar999.online')) {
+            if (uri.host.contains('blogforge.pythonanywhere.com')) {
               return NavigationDecision.navigate;
             }
 
@@ -68,7 +68,7 @@ class _WebViewExampleState extends State<WebViewExample> {
           },
         ),
       )
-      ..loadRequest(Uri.parse("https://imvickykumar999.online/"));
+      ..loadRequest(Uri.parse("https://blogforge.pythonanywhere.com/"));
   }
 
   // 🔗 External URL handler
