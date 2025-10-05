@@ -123,7 +123,7 @@ class _WebViewExampleState extends State<WebViewExample> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFF04203F),
+          backgroundColor: const Color(0xFF4F00A7),
           iconTheme: const IconThemeData(color: Colors.white),
           title: GestureDetector(
             onTap: () {
