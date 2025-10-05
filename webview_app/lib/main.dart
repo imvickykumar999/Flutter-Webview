@@ -33,42 +33,43 @@ class _WebViewExampleState extends State<WebViewExample> {
   void initState() {
     super.initState();
 
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onNavigationRequest: (NavigationRequest request) async {
-            Uri uri = Uri.parse(request.url);
+    _controller =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onNavigationRequest: (NavigationRequest request) async {
+                Uri uri = Uri.parse(request.url);
 
-            // Allow internal domain to load in WebView
-            if (uri.host.contains('blogforge.pythonanywhere.com')) {
-              return NavigationDecision.navigate;
-            }
+                // Allow internal domain to load in WebView
+                if (uri.host.contains('adkweb.imvickykumar999.dpdns.org')) {
+                  return NavigationDecision.navigate;
+                }
 
-            // Handle external links robustly
-            await _launchExternalUrl(request.url, context);
-            return NavigationDecision.prevent;
-          },
-          onPageStarted: (String url) {
-            setState(() {
-              _currentUrl = url;
-              _pageTitle = "Loading...";
-            });
-          },
-          onPageFinished: (String url) async {
-            final updatedUrl = await _controller.currentUrl();
-            final title = await _controller.getTitle();
-            setState(() {
-              _currentUrl = updatedUrl ?? 'Unknown URL';
-              _pageTitle = title ?? 'No Title';
-            });
-          },
-          onWebResourceError: (WebResourceError error) {
-            debugPrint("WebView Error: ${error.description}");
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse("https://blogforge.pythonanywhere.com/"));
+                // Handle external links robustly
+                await _launchExternalUrl(request.url, context);
+                return NavigationDecision.prevent;
+              },
+              onPageStarted: (String url) {
+                setState(() {
+                  _currentUrl = url;
+                  _pageTitle = "Loading...";
+                });
+              },
+              onPageFinished: (String url) async {
+                final updatedUrl = await _controller.currentUrl();
+                final title = await _controller.getTitle();
+                setState(() {
+                  _currentUrl = updatedUrl ?? 'Unknown URL';
+                  _pageTitle = title ?? 'No Title';
+                });
+              },
+              onWebResourceError: (WebResourceError error) {
+                debugPrint("WebView Error: ${error.description}");
+              },
+            ),
+          )
+          ..loadRequest(Uri.parse("https://adkweb.imvickykumar999.dpdns.org/"));
   }
 
   // 🔗 External URL handler
@@ -79,7 +80,10 @@ class _WebViewExampleState extends State<WebViewExample> {
 
       // Attempt external app launch
       if (await canLaunchUrl(uri)) {
-        final launched = await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
+        final launched = await launchUrl(
+          uri,
+          mode: LaunchMode.externalNonBrowserApplication,
+        );
         if (!launched) {
           // Fallback to platform default
           await launchUrl(uri, mode: LaunchMode.platformDefault);
@@ -89,18 +93,18 @@ class _WebViewExampleState extends State<WebViewExample> {
         await launchUrl(uri, mode: LaunchMode.platformDefault);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error opening URL: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error opening URL: $e")));
     }
   }
 
   // 📋 Copy current URL to clipboard
   void _copyUrlToClipboard() {
     Clipboard.setData(ClipboardData(text: _currentUrl)).then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("URL copied to clipboard")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("URL copied to clipboard")));
     });
   }
 
